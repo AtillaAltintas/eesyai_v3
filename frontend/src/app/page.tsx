@@ -8,47 +8,56 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
 
   const sendMessage = async () => {
-    if (!input.trim()) return
+  if (!input.trim()) return
 
-    // Add user message to chat
-    setMessages(prev => [...prev, { role: 'user', content: input }])
-    setLoading(true)
+  setMessages(prev => [...prev, { role: 'user', content: input }])
+  setLoading(true)
 
-    try {
-      const res = await fetch('http://localhost:8000/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
-      })
+  const controller = new AbortController()
+  const newMsg = { role: 'assistant', content: '' }
+  setMessages(prev => [...prev, newMsg])
 
-      const data = await res.json()
-      console.log("Raw backend response:", data)
+  try {
+    const res = await fetch('http://localhost:8000/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: input }),
+      signal: controller.signal,
+    })
 
-      const cleaned = data.reply
-        ?.replace(/\u001b\[0m/g, '')       // remove ANSI color reset
-        ?.replace(/<\|im_end\|>/g, '')     // remove end marker
-        ?.trim()
+    const reader = res.body?.getReader()
+    const decoder = new TextDecoder()
 
-      console.log("AI cleaned reply:", cleaned)
+    if (reader) {
+      let done = false
+      while (!done) {
+        const { value, done: isDone } = await reader.read()
+        done = isDone
+        const chunk = decoder.decode(value)
 
-      if (cleaned) {
-        setMessages(prev => [...prev, { role: 'assistant', content: cleaned }])
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Empty response from server.' }])
+        setMessages(prev => {
+          const last = prev[prev.length - 1]
+          if (last.role !== 'assistant') return prev
+          const updated = { ...last, content: last.content + chunk }
+          return [...prev.slice(0, -1), updated]
+        })
       }
-    } catch (err) {
-      console.error("Fetch error:", err)
-      setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Error contacting the server.' }])
     }
-
-    setInput('')
-    setLoading(false)
+  } catch (err) {
+    setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Error during streaming.' }])
   }
+
+  setInput('')
+  setLoading(false)
+}
+
 
   return (
     <main className="max-w-2xl mx-auto mt-10 px-4">
       <h1 className="text-3xl font-bold mb-6 text-center">🤖 EESYAI</h1>
-
+      
+      {loading && <div className="text-gray-500 italic">AI is typing...</div>}
+      
       <div className="space-y-4 mb-6">
         {messages.map((msg, i) => (
           <div
