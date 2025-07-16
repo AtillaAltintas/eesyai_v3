@@ -1,0 +1,18 @@
+# Node
+frontend/node_modules
+frontend/.next
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# System
+.DS_Store
+
+# Logs
+*.log
+
+# Models
+llama.cpp/models/*.gguf
+llama.cpp/
