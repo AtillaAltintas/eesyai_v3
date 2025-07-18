@@ -18,12 +18,13 @@ export default function Home() {
   setMessages(prev => [...prev, newMsg])
 
   try {
-    const res = await fetch('http://localhost:8000/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input }),
-      signal: controller.signal,
-    })
+    const history = messages.filter(msg => msg.role === 'user' || msg.role === 'assistant')
+
+    const res = await fetch('http://localhost:8001/api/ai', {
+	  method: 'POST',
+	  headers: { 'Content-Type': 'application/json' },
+	  body: JSON.stringify({ message: input, history }),
+	})
 
     const reader = res.body?.getReader()
     const decoder = new TextDecoder()
@@ -62,7 +63,7 @@ export default function Home() {
         {messages.map((msg, i) => (
           <div
   key={i}
-  className={`p-3 rounded-md whitespace-pre-wrap ${
+  className={`p-3 rounded-md whitespace-pre-wrap break-words ${
     msg.role === 'user' ? 'bg-blue-100 text-black' : 'bg-gray-100 text-black'
   }`}
 >
