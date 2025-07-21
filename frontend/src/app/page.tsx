@@ -20,7 +20,7 @@ export default function Home() {
   try {
     const history = messages.filter(msg => msg.role === 'user' || msg.role === 'assistant')
 
-    const res = await fetch('http://localhost:8001/api/ai', {
+    const res = await fetch('http://localhost:8000/api/ai', {
 	  method: 'POST',
 	  headers: { 'Content-Type': 'application/json' },
 	  body: JSON.stringify({ message: input, history }),
