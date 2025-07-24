@@ -1,6 +1,5 @@
 // src/app/layout.tsx
 
-import Nav from '@/components/Nav'
 import './globals.css'
 import { ReactNode } from 'react'
 import Nav from '@/components/Nav'
@@ -9,10 +8,6 @@ import Nav from '@/components/Nav'
    title: 'EESYAI',
    description: 'Your AI chatbot',
  }
-export const metadata = {
-  title: 'EESYAI',
-  description: 'Your AI chatbot',
-}
 
 interface RootLayoutProps {
   children: ReactNode
