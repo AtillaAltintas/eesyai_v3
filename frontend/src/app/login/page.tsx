@@ -36,7 +36,7 @@ export default function LoginPage() {
       }
       localStorage.setItem('token', data.access_token);
       router.replace('/');
-    } catch (err) {
+    } catch {
       setError('Network error');
       setLoading(false);
     }
