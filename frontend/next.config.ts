@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       // proxy all /api/ai/*   → https://eesyai-v3.onrender.com/api/ai/*
       {
         source: '/api/ai/:path*',
-        destination: ${process.env.NEXT_PUBLIC_API_URL}/:path*,
+        destination: ${process.env.NEXT_PUBLIC_API_URL}/api/ai/:path*,
       },
     ]
   },
