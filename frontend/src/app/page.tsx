@@ -110,14 +110,14 @@ export default function Home() {
 
     try {
       const history = activeChat.messages;
-      const res = await fetch('/api/auth/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ message: userInput, history }),
-      });
+      const res = await fetch('/api/ai', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+  },
+  body: JSON.stringify({ message: userInput, history }),
+});
 
       const reader = res.body?.getReader();
       const decoder = new TextDecoder();
