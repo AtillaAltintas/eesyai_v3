@@ -27,7 +27,7 @@ export default function SignupPage() {
       }
       setSuccess('Account created! Redirecting to login...');
       setTimeout(() => router.push('/login'), 1500);
-    } catch {
+    } catch (err) {
       setError('Network error');
     }
   };

@@ -36,7 +36,7 @@ export default function LoginPage() {
       }
       localStorage.setItem('token', data.access_token);
       router.replace('/');
-    } catch {
+    } catch (err) {
       setError('Network error');
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-4 text-center text-sm">
-        Do not have an account?{' '}
+        Don't have an account?{' '}
         <Link href="/signup" className="text-blue-600 hover:underline">
           Sign up here
         </Link>

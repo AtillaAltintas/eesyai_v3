@@ -1,20 +1,15 @@
 // src/app/layout.tsx
-
 import './globals.css'
-import { ReactNode } from 'react'
+import { PropsWithChildren } from 'react'
 import Nav from '@/components/Nav'
 
- export const metadata = {
-   title: 'EESYAI',
-   description: 'Your AI chatbot',
- }
-
-interface RootLayoutProps {
-  children: ReactNode
+export const metadata = {
+  title: 'EESYAI',
+  description: 'Your AI chatbot',
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
-   return (
+export default function RootLayout({ children }: PropsWithChildren<{}>) {
+  return (
     <html lang="en">
       <body className="antialiased">
         <Nav />
