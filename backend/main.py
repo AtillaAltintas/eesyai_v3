@@ -76,8 +76,7 @@ async def get_db():
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://eesyai-v3.onrender.com/api/ai",
-    "https://eesyai-v3.onrender.com",
+    allow_origins=["https://eesyai-v3.onrender.com",
       "https://eesyai.vercel.app",
       "https://www.eesyai.com",
     ],
