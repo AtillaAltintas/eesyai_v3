@@ -76,12 +76,7 @@ async def get_db():
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-      "http://localhost:3000",
-      "https://eesyai-v3.onrender.com",
-      "https://eesyai.vercel.app",
-      "https://www.eesyai.com",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -160,17 +155,22 @@ async def get_current_user(
 
 # ─── Protected AI endpoint ────────────────────────────────────────────────────
 @app.post("/api/ai")
-async def chat(request: Request):
+async def chat(
+    request: Request,
+    user: User = Depends(get_current_user)
+):
     body    = await request.json()
     new_msg = body.get("message", "")
     history = body.get("history", [])
 
-    # build prompt…
+    # System instruction
     system_instruction = (
         "You are a helpful, multilingual assistant. "
         "Answer concisely in whichever language the user writes, "
         "and stop—do not ask any follow-up questions."
     )
+
+    # Build prompt
     prompt_lines = [system_instruction, ""]
     for msg in history:
         role = "User" if msg["role"] == "user" else "Assistant"
@@ -179,26 +179,32 @@ async def chat(request: Request):
     prompt_lines.append("Assistant:")
     prompt = "\n".join(prompt_lines)
 
+    # Stream from llama-server
     def stream():
-        with requests.post(
+        buf = StringIO()
+        resp = requests.post(
             "http://localhost:8080/completion",
             json={"prompt": prompt, "stream": True},
             headers={"Accept-Encoding": "identity"},
             stream=True,
-        ) as resp:
-            for line in resp.iter_lines():
-                if not line or not line.startswith(b"data: "):
-                    continue
-                raw = line[len(b"data: "):].decode("utf-8")
-                try:
-                    chunk = json.loads(raw).get("content", "")
-                except json.JSONDecodeError:
-                    continue
-                # clean tokens
-                chunk = chunk.replace("<|im_end|>", "").replace("\u001b[0m", "")
-                # **Immediately yield every piece**
-                yield chunk
+        )
+        for line in resp.iter_lines():
+            if not line or not line.startswith(b"data: "):
+                continue
+            try:
+                chunk = json.loads(line[6:].decode())["content"]
+            except:
+                continue
+            # Clean and buffer
+            chunk = chunk.replace("<|im_end|>", "").replace("\u001b[0m", "")
+            buf.write(chunk)
+            if chunk.endswith((" ", "\n", ".", "!", "?")):
+                out = buf.getvalue()
+                buf = StringIO()
+                yield out
+        # Flush remainder
+        if buf.getvalue():
+            yield buf.getvalue()
 
     return StreamingResponse(stream(), media_type="text/plain")
-
 
