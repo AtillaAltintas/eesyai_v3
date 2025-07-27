@@ -9,7 +9,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,7 +31,7 @@ async def chat(request: Request):
 
     def stream():
         with requests.post(
-            "http://localhost:8080/completion",
+            "https://eesyai-v3.onrender.com/api/ai",
             json={"prompt": prompt, "stream": True},
             stream=True,
         ) as r:
