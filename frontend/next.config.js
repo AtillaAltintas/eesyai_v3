@@ -1,21 +1,23 @@
 /** @type {import('next').NextConfig} */
-import type { NextConfig } from "next";
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   async rewrites() {
     return [
-      // proxy /api/auth/* → your Render backend
+      // proxy all /api/auth/* → https://eesyai-v3.onrender.com/auth/*
       {
         source: '/api/auth/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL}/auth/:path*`,
       },
-      // proxy /api/ai/* → your Render backend
+      // proxy all /api/ai/*   → https://eesyai-v3.onrender.com/api/ai/*
       {
         source: '/api/ai/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL}/api/ai/:path*`,
       },
-    ];
+    ]
   },
-};
+}
 
-module.exports = nextConfig;
+export default nextConfig
+
 
