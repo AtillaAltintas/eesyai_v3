@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 const nextConfig = {
   async rewrites() {
     return [
