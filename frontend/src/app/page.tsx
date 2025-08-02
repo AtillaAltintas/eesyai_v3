@@ -48,11 +48,15 @@ export default function Home() {
   try {
     const history = chats.find((c) => c.id === activeChatId)!.messages
 
-    const res = await fetch('http://localhost:8000/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input, history }),
-    })
+    // streaming chat
+    const res = await fetch(`${API}/api/ai`, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${localStorage.getItem("token")}`,
+       },
+       body: JSON.stringify({ message: userInput, history }),
+     });
 
     const reader = res.body?.getReader()
     const decoder = new TextDecoder()
