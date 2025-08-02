@@ -49,7 +49,7 @@ export default function Home() {
     const history = chats.find((c) => c.id === activeChatId)!.messages
 
     // streaming chat
-    const res = await fetch(`${API}/api/ai`, {
+    const res = await fetch('/api/ai', {
        method: "POST",
        headers: {
          "Content-Type": "application/json",
