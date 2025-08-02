@@ -21,7 +21,8 @@ export default function Home() {
 
   // Send message (streaming as before)
   const sendMessage = async () => {
-  if (!input.trim()) return
+  const userInput = input
+  if (!userInput.trim()) return
 
   // 1. If this is the first message in the chat, set title to it
   setChats(prev =>
