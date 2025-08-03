@@ -13,7 +13,6 @@ export default function Home() {
 
 
   // Chat state
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   useEffect(() => {
