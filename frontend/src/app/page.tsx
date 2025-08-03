@@ -64,9 +64,7 @@ export default function Home() {
   const activeChat = chats.find(c => c.id === activeChatId) || chats[0];
 
   // Auto-scroll
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [activeChat.messages.length, loading]);
+
 
   // ────────────────────────────────
   // Send message (streaming)
