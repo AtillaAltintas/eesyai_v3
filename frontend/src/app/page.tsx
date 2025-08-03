@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 type Chat    = { id: string; title: string; messages: Message[] };
