@@ -9,7 +9,7 @@ const DEFAULT_CHAT: Chat = { id: '1', title: 'New Chat', messages: [] };
 const STORAGE_KEY = 'eesyai_chats_v3';
 
 export default function Home() {
-  const router = useRouter();
+
 
 
   // Chat state
