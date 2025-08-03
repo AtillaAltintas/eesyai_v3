@@ -16,3 +16,4 @@ __pycache__/
 # Models
 llama.cpp/models/*.gguf
 llama.cpp/
+.vercel
