@@ -89,7 +89,7 @@ export default function Home() {
 
     try {
       const history = activeChat.messages;
-      const res = await fetch('http://localhost:8000/api/ai', {
+      const res = await fetch('*/api/ai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
