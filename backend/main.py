@@ -15,7 +15,7 @@ app.add_middleware(
 )
 
 # Your llama-server API URL on your server (adjust if not public!)
-LLAMA_API_URL = os.getenv("LLAMA_API_URL", "http://127.0.0.1:8080/completion")
+LLAMA_API_URL = os.getenv("LLAMA_API_URL", "https://such-yen-connected-forms.trycloudflare.com/")
 
 @app.post("/api/ai")
 async def chat(request: Request):
