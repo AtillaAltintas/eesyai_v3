@@ -23,7 +23,7 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/auth/token', {
+      const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ username: email, password }),
@@ -36,7 +36,7 @@ export default function LoginPage() {
       }
       localStorage.setItem('token', data.access_token);
       router.replace('/');
-    } catch (err) {
+    } catch {
       setError('Network error');
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export default function LoginPage() {
       </form>
 
       <p className="mt-4 text-center text-sm">
-        Don't have an account?{' '}
+        Do not have an account?{' '}
         <Link href="/signup" className="text-blue-600 hover:underline">
           Sign up here
         </Link>
