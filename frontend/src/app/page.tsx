@@ -89,7 +89,7 @@ export default function Home() {
 
     try {
       const history = activeChat.messages;
-      const res = await fetch('*', {
+      const res = await fetch('https://eesyai.onrender.com/api/ai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
