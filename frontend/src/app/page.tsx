@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState useEffect } from 'react';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 type Chat    = { id: string; title: string; messages: Message[] };
