@@ -1,26 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 type Message = { role: 'user' | 'assistant'; content: string };
-type Chat    = { id: string; title: string; messages: Message[] };
+type Chat = { id: string; title: string; messages: Message[] };
 
 const DEFAULT_CHAT: Chat = { id: '1', title: 'New Chat', messages: [] };
 const STORAGE_KEY = 'eesyai_chats_v3';
 
 export default function Home() {
-
-
-
-  // Chat state
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   useEffect(() => {
     if (!menuOpenId) return;
     const handleClickOutside = (e: MouseEvent) => {
-      const container = document.getElementById(
-        `menu-container-${menuOpenId}`
-      );
+      const container = document.getElementById(`menu-container-${menuOpenId}`);
       if (container && !container.contains(e.target as Node)) {
         setMenuOpenId(null);
       }
@@ -32,12 +27,11 @@ export default function Home() {
   }, [menuOpenId]);
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  useEffect(() => setMounted(true), []);
 
   const [chats, setChats] = useState<Chat[]>([DEFAULT_CHAT]);
   const [activeChatId, setActiveChatId] = useState(chats[0].id);
 
-  // Load/persist chats
   useEffect(() => {
     if (!mounted) return;
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -57,32 +51,29 @@ export default function Home() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
   }, [chats, mounted]);
 
-  const [input, setInput]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
   const activeChat = chats.find(c => c.id === activeChatId) || chats[0];
 
-  // Auto-scroll
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [activeChat.messages.length, loading]);
 
-
-  // ────────────────────────────────
-  // Send message (streaming)
   const sendMessage = async () => {
     if (!input.trim()) return;
     const userInput = input;
     setInput('');
 
-    // append user + placeholder
     setChats(prev =>
       prev.map(c =>
         c.id === activeChatId
           ? {
               ...c,
-              title:
-                c.messages.length === 0
-                  ? userInput.slice(0, 30) + (userInput.length > 30 ? '…' : '')
-                  : c.title,
+              title: c.messages.length === 0
+                ? userInput.slice(0, 30) + (userInput.length > 30 ? '…' : '')
+                : c.title,
               messages: [
                 ...c.messages,
                 { role: 'user', content: userInput },
@@ -118,7 +109,6 @@ export default function Home() {
           const chunk = decoder.decode(value);
           aiContent += chunk;
 
-          // update last assistant message
           setChats(prev =>
             prev.map(c =>
               c.id === activeChatId
@@ -136,7 +126,6 @@ export default function Home() {
         }
       }
     } catch {
-      // on error replace placeholder
       setChats(prev =>
         prev.map(c =>
           c.id === activeChatId
@@ -155,8 +144,6 @@ export default function Home() {
     setLoading(false);
   };
 
-  // ────────────────────────────────
-  // Chat controls
   const createNewChat = () => {
     const newChat: Chat = {
       id: Date.now().toString(),
@@ -174,9 +161,7 @@ export default function Home() {
   };
 
   const handleResetAll = () => {
-    if (
-      window.confirm('Are you sure you want to delete *all* chats?')
-    ) {
+    if (window.confirm('Are you sure you want to delete *all* chats?')) {
       resetAllChats();
     }
   };
@@ -194,9 +179,7 @@ export default function Home() {
   const copyChat = (id: string) => {
     const chat = chats.find(c => c.id === id);
     if (!chat) return;
-    const text = chat.messages
-      .map(m => `${m.role === 'user' ? 'You' : 'AI'}: ${m.content}`)
-      .join('\n');
+    const text = chat.messages.map(m => `${m.role === 'user' ? 'You' : 'AI'}: ${m.content}`).join('\n');
     navigator.clipboard.writeText(text);
     alert('Chat copied to clipboard!');
   };
@@ -207,16 +190,8 @@ export default function Home() {
     setTimeout(() => setCopiedIdx(null), 2000);
   };
 
-  // ────────────────────────────────
-  // Logout action
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    router.replace('/login');
-  };
-
   return (
     <div className="flex h-screen bg-neutral-100">
-      {/* Sidebar */}
       <aside className="flex flex-col h-screen bg-neutral-200 border-r border-neutral-300 w-72">
         <button
           onClick={createNewChat}
@@ -239,17 +214,13 @@ export default function Home() {
                     ? 'bg-neutral-700 text-white border-l-4 border-blue-500'
                     : 'bg-neutral-300 hover:bg-neutral-400 text-black'
                 }`}
-                style={{
-                  fontWeight: chat.id === activeChatId ? 600 : 400
-                }}
+                style={{ fontWeight: chat.id === activeChatId ? 600 : 400 }}
               >
                 {chat.title}
               </button>
               <button
                 onClick={() =>
-                  setMenuOpenId(prev =>
-                    prev === chat.id ? null : chat.id
-                  )
+                  setMenuOpenId(prev => (prev === chat.id ? null : chat.id))
                 }
                 className="px-2 py-1 bg-gray-300 text-black rounded hover:bg-gray-400"
                 title="Options"
@@ -292,17 +263,9 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* Main Chat Area */}
       <main className="flex-1 flex flex-col">
-        {/* Header with Logout */}
         <div className="flex justify-between items-center px-6 py-4 bg-white shadow">
           <h1 className="text-3xl font-bold">🤖 EESYAI</h1>
-          <button
-            onClick={handleLogout}
-            className="text-red-500 hover:text-red-700"
-          >
-            Logout
-          </button>
         </div>
 
         <div className="flex-1 overflow-auto px-4 py-6 space-y-4">
@@ -310,16 +273,11 @@ export default function Home() {
             <div
               key={i}
               className={`p-3 rounded-md whitespace-pre-wrap break-words flex justify-between items-start ${
-                msg.role === 'user'
-                  ? 'bg-blue-100 text-black'
-                  : 'bg-gray-100 text-black'
+                msg.role === 'user' ? 'bg-blue-100' : 'bg-gray-100'
               }`}
             >
               <div>
-                <strong>
-                  {msg.role === 'user' ? 'You' : 'AI'}:
-                </strong>{' '}
-                {msg.content}
+                <strong>{msg.role === 'user' ? 'You' : 'AI'}:</strong> {msg.content}
               </div>
               {msg.role === 'assistant' && msg.content && (
                 <button
@@ -332,7 +290,6 @@ export default function Home() {
               )}
             </div>
           ))}
-
           {loading && (
             <div className="text-gray-500 italic">AI is typing...</div>
           )}

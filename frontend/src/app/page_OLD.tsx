@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-type Message = { role: string; content: string }
+type Message = { role: 'user' | 'assistant'; content: string };
 type Chat = { id: string; title: string; messages: Message[] }
 
 export default function Home() {
