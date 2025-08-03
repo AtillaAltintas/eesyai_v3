@@ -8,16 +8,16 @@ type Chat    = { id: string; title: string; messages: Message[] };
 const DEFAULT_CHAT: Chat = { id: '1', title: 'New Chat', messages: [] };
 const STORAGE_KEY = 'eesyai_chats_v3';
 
-export default function Home() {
-  const router = useRouter();
+//export default function Home() {
+//  const router = useRouter();
 
   // ────────────────────────────────
   // Redirect to /login if there's no token
-  useEffect(() => {
-    if (typeof window !== 'undefined' && !localStorage.getItem('token')) {
-      router.replace('/login');
-    }
-  }, [router]);
+//  useEffect(() => {
+//    if (typeof window !== 'undefined' && !localStorage.getItem('token')) {
+//      router.replace('/login');
+//    }
+//  }, [router]);
 
   // ────────────────────────────────
   // Chat state
